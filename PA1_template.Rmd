@@ -2,11 +2,19 @@
 
 
 ## Loading and preprocessing the data
-
+```{r}
+df <- read.csv("activity.csv", stringsAsFactors=FALSE)
+df$steps <- as.numeric(df$steps)
+```
 
 
 ## What is mean total number of steps taken per day?
-
+```{r}
+grouped <- aggregate(df$steps, list(df$date), sum)
+hist(grouped[,2])
+mean(grouped[,2], na.rm=TRUE)
+median(grouped[,2], na.rm=TRUE)
+```
 
 
 ## What is the average daily activity pattern?
