@@ -33,7 +33,26 @@ interval_grouped[interval_grouped$avg == max(interval_grouped$avg),]$interval
 
 
 ## Imputing missing values
+### total number of missing values in the dataset
+```{r}
+length(df$steps[is.na(df$steps)])
+```
 
+### you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
+```{r}
+# merge data framw with intervals grouping to get average of 5-minute period
+m1 <- merge(interval_grouped, df, by.x = "interval", by.y = "interval")
 
+# sort to get the same ordering
+m1 <- m1[order(m1$date, m1$interval),]
+
+# replace na with average if interval
+df$steps[is.na(df$steps)] <- m1$avg[is.na(df$steps)]
+
+date_grouped1 <- aggregate(df$steps, list(df$date), sum)
+hist(date_grouped1[,2])
+mean(date_grouped1[,2], na.rm=TRUE)
+median(date_grouped1[,2], na.rm=TRUE)
+```
 
 ## Are there differences in activity patterns between weekdays and weekends?
