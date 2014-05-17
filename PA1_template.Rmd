@@ -10,15 +10,26 @@ df$steps <- as.numeric(df$steps)
 
 ## What is mean total number of steps taken per day?
 ```{r}
-grouped <- aggregate(df$steps, list(df$date), sum)
-hist(grouped[,2])
-mean(grouped[,2], na.rm=TRUE)
-median(grouped[,2], na.rm=TRUE)
+date_grouped <- aggregate(df$steps, list(df$date), sum)
+hist(date_grouped[,2])
+mean(date_grouped[,2], na.rm=TRUE)
+median(date_grouped[,2], na.rm=TRUE)
 ```
 
 
 ## What is the average daily activity pattern?
+```{r}
+interval_grouped <- aggregate(
+    list(avg = df$steps),
+    list(interval = df$interval),
+    mean,
+    na.rm=TRUE)
 
+plot(interval_grouped$interval, interval_grouped$avg, type="l")
+
+# maximum 5 minute interval accross all the days in the dataset
+interval_grouped[interval_grouped$avg == max(interval_grouped$avg),]$interval
+```
 
 
 ## Imputing missing values
