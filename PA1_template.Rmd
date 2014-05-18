@@ -13,10 +13,11 @@ df$steps <- as.numeric(df$steps)
 
 ## What is mean total number of steps taken per day?
 ```{r}
-date_grouped <- aggregate(df$steps, list(df$date), sum)
-hist(date_grouped[,2])
-mean(date_grouped[,2], na.rm=TRUE)
-median(date_grouped[,2], na.rm=TRUE)
+date_grouped <- aggregate(list(total_steps=df$steps), list(date=df$date), sum)
+
+barplot(date_grouped$total_steps, names.arg=c(), xlab="day", ylab="steps")
+mean(date_grouped$total_steps, na.rm=TRUE)
+median(date_grouped$total_steps, na.rm=TRUE)
 ```
 
 
