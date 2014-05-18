@@ -3,6 +3,9 @@
 
 ## Loading and preprocessing the data
 ```{r}
+require(lattice)
+Sys.setlocale("LC_TIME", "C")
+
 df <- read.csv("activity.csv", stringsAsFactors=FALSE)
 df$steps <- as.numeric(df$steps)
 ```
@@ -38,7 +41,7 @@ interval_grouped[interval_grouped$avg == max(interval_grouped$avg),]$interval
 length(df$steps[is.na(df$steps)])
 ```
 
-### you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
+### 
 ```{r}
 # merge data framw with intervals grouping to get average of 5-minute period
 m1 <- merge(interval_grouped, df, by.x = "interval", by.y = "interval")
@@ -55,4 +58,47 @@ mean(date_grouped1[,2], na.rm=TRUE)
 median(date_grouped1[,2], na.rm=TRUE)
 ```
 
-## Are there differences in activity patterns between weekdays and weekends?
+## Are there differences in activity patterns between weekdays and
+```{r}
+
+# group by date and interval averaging steps
+date_interval_grouped <- aggregate(
+    list(avg=df$steps),
+    list(interval=df$interval, date=df$date),
+    mean,
+    na.rm=TRUE)
+
+# get weekdays and add as column
+weekday <- weekdays(as.Date(date_interval_grouped$date, "%Y-%M-%d"))
+date_interval_grouped$weekday <- as.factor(weekday)
+
+## split by weekend and weekdays
+
+# compute averages for weekend
+weekend_subset <- date_interval_grouped[date_interval_grouped$weekday %in% c("Saturday", "Sunday"),]
+
+weekend_grouped <- aggregate(
+    list(avg=weekend_subset$avg),
+    list(interval=weekend_subset$interval),
+    mean,
+    na.rm=TRUE)
+
+weekend_grouped$weekday = as.factor("weekend")
+
+## compute averages for weekdays
+
+weekday_subset <- date_interval_grouped[date_interval_grouped$weekday %in% c("Monday", "Tuesday", "Wednesday", "Thursday",  "Friday"),]
+
+weekday_grouped <- aggregate(
+    list(avg=weekday_subset$avg),
+    list(interval=weekday_subset$interval),
+    mean,
+    na.rm=TRUE)
+weekday_grouped$weekday = as.factor("weekday")
+
+## join and plot
+total <- rbind(weekday_grouped, weekend_grouped)
+
+xyplot(avg~interval | weekday, total, layout=c(1,2), ylab="Number of steps", xlab="Interval", type="l")
+
+```
