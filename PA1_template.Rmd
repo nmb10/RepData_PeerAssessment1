@@ -12,14 +12,34 @@ df$steps <- as.numeric(df$steps)
 
 
 ## What is mean total number of steps taken per day?
+### Total steps
 ```{r}
+
 date_grouped <- aggregate(list(total_steps=df$steps), list(date=df$date), sum)
 
 barplot(date_grouped$total_steps, names.arg=c(), xlab="day", ylab="steps")
-mean(date_grouped$total_steps, na.rm=TRUE)
-median(date_grouped$total_steps, na.rm=TRUE)
 ```
+### Mean
+```{r}
+date_grouped_mean <- aggregate(
+    list(avg=df$steps),
+    list(date=df$date),
+    mean,
+    na.rm=TRUE)
 
+barplot(date_grouped_mean$avg, names.arg=c(), xlab="day", ylab="steps mean")
+```
+### Median
+```{r}
+date_grouped_median <- aggregate(
+    list(med=df$steps),
+    list(date=df$date),
+    median,
+    na.rm=TRUE)
+
+barplot(date_grouped_median$med, names.arg=c(), xlab="day", ylab="steps median")
+
+```
 
 ## What is the average daily activity pattern?
 ```{r}
@@ -29,9 +49,11 @@ interval_grouped <- aggregate(
     mean,
     na.rm=TRUE)
 
-plot(interval_grouped$interval, interval_grouped$avg, type="l")
+plot(interval_grouped$interval, interval_grouped$avg, type="l", xlab="Interval", ylab="Average steps")
+```
 
-# maximum 5 minute interval accross all the days in the dataset
+### maximum 5 minute interval accross all the days in the dataset
+```{r}
 interval_grouped[interval_grouped$avg == max(interval_grouped$avg),]$interval
 ```
 
